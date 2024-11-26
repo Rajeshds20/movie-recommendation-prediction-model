@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        h1 {
+            color: #5a5aff;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            color: white;
+            background-color: #5a5aff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #4040d8;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background: #fff;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        li strong {
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Search for Movie Recommendations</h1>
+    <form method="POST">
+        <input type="text" name="query" placeholder="Enter genre (e.g., Bank Robbery movies, Car chase sequences)"
+            required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if movies is not none %}
+    <h2>Results for "{{ query }}":</h2>
+    <ul>
+        {% for movie in movies %}
+        <li>
+            <strong>{{ movie.title }}</strong> {% if movie.year %} ({{ movie.year }}) {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</body>
+
+</html>

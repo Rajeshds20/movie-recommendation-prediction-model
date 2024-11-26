@@ -1,0 +1,4 @@
+chromadb
+Flask
+sentence_transformers
+google-generativeai
