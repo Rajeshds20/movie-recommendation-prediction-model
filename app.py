@@ -127,7 +127,7 @@ def more_movie_response(prompt: str):
 
 def refine_user_prompt(prompt: str):
     genai.configure(api_key=API_KEY)
-    print('gen ai')
+    # print('gen ai')
     model = genai.GenerativeModel(model_name='models/gemini-1.5-flash')
     response = model.generate_content(f"""
         refine this prompt for vector search, don't change the meaning, correct grammar
@@ -155,7 +155,7 @@ while True:
 
     refined_text = refine_user_prompt(query)
 
-    print(refined_text)
+    # print(refined_text)
 
     more_results = more_movie_response(refined_text)
 
@@ -188,24 +188,27 @@ while True:
 
     # print(results)
 
-    print('Your top 5 movie suggestions are: ')
+    print('Your top 4 movie suggestions are: ')
 
     output = {"data": []}
 
     for i, result in enumerate(results['metadatas'][0]):
-        if i == 1:
-            movie_name = result['name'] or ''
-            # output['data'].append({
-            #     'name': movie_name,
-            #     'year': ''
-            # })
-            print(f"Result {i + 1}: {movie_name}")
+        if i % 2:
+            if i == 1:
+                movie_name = result['name'] or ''
+                # output['data'].append({
+                #     'name': movie_name,
+                #     'year': ''
+                # })
+                print(f"Result {i + 1}: {movie_name}")
         else:
             data = json.loads(result['text'])
             # output['data'].append({
             #     'name': data['name'],
             #     'year': data['release_year'] or ''
             # })
+            if i == 4:
+                i = 3
             print(f"Result {i + 1}: {data['name']} ({data['release_year']})")
     # print(output)
 
