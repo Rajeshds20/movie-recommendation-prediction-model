@@ -8,11 +8,11 @@ import os
 import json
 import logging
 from secretsIn import API_KEY
-from flask import Flask, render_template, request, jsonify
-# logging.basicConfig(level=logging.DEBUG)
+# from flask import Flask, render_template, request, jsonify
+logging.basicConfig(level=logging.DEBUG)
 
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
 
 client = chromadb.Client()
@@ -127,11 +127,13 @@ def more_movie_response(prompt: str):
 
 def refine_user_prompt(prompt: str):
     genai.configure(api_key=API_KEY)
+    print('gen ai')
     model = genai.GenerativeModel(model_name='models/gemini-1.5-flash')
     response = model.generate_content(f"""
         refine this prompt for vector search, don't change the meaning, correct grammar
         {prompt}
         """)
+    # print(response.text)
     return response.text
 
 # embeddings = model.encode(texts)
@@ -143,14 +145,19 @@ def refine_user_prompt(prompt: str):
 # )
 
 
-def get_movie_recommendations(query):
-    query = [query]
-
+# def get_movie_recommendations(query):
+while True:
+    print('Enter your interests: ')
     query = input()
 
-    filtered_text = refine_user_prompt(query)
+    # print(query)
+    query = [query]
 
-    more_results = more_movie_response(filtered_text)
+    refined_text = refine_user_prompt(query)
+
+    print(refined_text)
+
+    more_results = more_movie_response(refined_text)
 
     try:
         fc = more_results.candidates[0].content.parts[0].function_call
@@ -160,7 +167,7 @@ def get_movie_recommendations(query):
         print(er)
 
     # Generate an embedding for the query text
-    query_embedding = model.encode(filtered_text)
+    query_embedding = model.encode(refined_text)
 
     # Perform a vector search in the collection
     results = collection.query(
@@ -183,46 +190,46 @@ def get_movie_recommendations(query):
 
     print('Your top 5 movie suggestions are: ')
 
-    output = {data: []}
+    output = {"data": []}
 
     for i, result in enumerate(results['metadatas'][0]):
-        if i % 2:
+        if i == 1:
             movie_name = result['name'] or ''
-            output['data'].append({
-                'name': movie_name,
-                'year': ''
-            })
-            # print(f"Result {i + 1}: {movie_name}")
+            # output['data'].append({
+            #     'name': movie_name,
+            #     'year': ''
+            # })
+            print(f"Result {i + 1}: {movie_name}")
         else:
             data = json.loads(result['text'])
-            output['data'].append({
-                'name': data['name'],
-                'year': data['release_year'] or ''
-            })
-            # print(f"Result {i + 1}: {data['name']}")
-    return output
+            # output['data'].append({
+            #     'name': data['name'],
+            #     'year': data['release_year'] or ''
+            # })
+            print(f"Result {i + 1}: {data['name']} ({data['release_year']})")
+    # print(output)
 
 
 # get_movie_recommendations("The Godfather")
 
-@app.route("/")
-def home():
-    return "Hi from Movie Recommender"
+# @app.route("/")
+# def home():
+#     return "Hi from Movie Recommender"
 
 
-@app.route('/api/movies', methods=['GET'])
-def movies():
-    query = request.args.get('query')  # Get the 'query' parameter from the URL
-    if not query:
-        # Return error if query is missing
-        return jsonify({"error": "No genre or query specified"}), 400
+# @app.route('/api/movies', methods=['GET'])
+# def movies():
+#     query = request.args.get('query')  # Get the 'query' parameter from the URL
+#     if not query:
+#         # Return error if query is missing
+#         return jsonify({"error": "No genre or query specified"}), 400
 
-    print(query)
+#     print(query)
 
-    # Call the function with the query
-    results = get_movie_recommendations(query)
-    return jsonify(results)  # Return the result as JSON
+#     # Call the function with the query
+#     results = get_movie_recommendations(query)
+#     return jsonify(results)  # Return the result as JSON
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
