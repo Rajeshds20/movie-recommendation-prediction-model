@@ -115,6 +115,7 @@ To ensure better results during vector search, the user input is refined to corr
 
 ```
 # Refining the user input for better search results
+```
 def refine_user_prompt(prompt: str):
     genai.configure(api_key=API_KEY)
     model = genai.GenerativeModel(model_name='models/gemini-1.5-flash')
@@ -123,11 +124,13 @@ def refine_user_prompt(prompt: str):
         {prompt}
         """)
     return response.text
-    ```
+```
 
+# Step 3: Setting up Google Cloud Project environment
 
-markdown
-Copy code
+- Install the gcloud dependency by following: https://cloud.google.com/vertex-ai/docs/vector-search/quickstart
+- Replace the PROJECT_ID with your google cloud project id, Replace the json with your dataset json file. Here we will be using Kaggle and Wikipedia dataset. Please find the dataset in the GitHub repository below.
+
 # User Input Processing and Movie Suggestions Workflow
 
 ## Steps:
