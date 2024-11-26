@@ -1,2 +1,3 @@
 secretsIn.py
 .venv/
+__pycache__
